@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from financial_auditor_agent.agent import (
+from financial_auditor_agent.tools import (
     calculate_financial_ratios,
     detect_anomalies,
     generate_audit_report,
@@ -105,8 +105,9 @@ class TestDetectAnomalies:
         assert "std_dev" in result["summary"]
 
     def test_anomaly_index_is_accurate(self):
+        # Use a threshold of 2.0 so 9999 in a dataset of ~50s is clearly flagged
         data = [50, 52, 49, 51, 9999, 50, 53]
-        result = detect_anomalies(data)
+        result = detect_anomalies(data, z_score_threshold=2.0)
         anomaly_indices = [a["index"] for a in result["anomalies"]]
         assert 4 in anomaly_indices
 

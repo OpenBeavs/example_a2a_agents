@@ -10,7 +10,7 @@ from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from weather_agent.agent import geocode_city, get_current_weather, get_forecast
+from weather_agent.tools import geocode_city, get_current_weather, get_forecast
 
 
 def _mock_urlopen(response_data: dict):

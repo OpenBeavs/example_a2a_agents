@@ -10,7 +10,7 @@ from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from trivia_agent.agent import list_trivia_categories, fetch_trivia_question, evaluate_answer
+from trivia_agent.tools import list_trivia_categories, fetch_trivia_question, evaluate_answer
 
 
 def _mock_urlopen(response_data: dict):

@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from code_review_agent.agent import (
+from code_review_agent.tools import (
     detect_code_smells,
     check_security_patterns,
     calculate_complexity_metrics,
