@@ -1,0 +1,48 @@
+{
+  "name": "code_review_agent",
+  "description": "A code review agent that detects code smells, identifies security vulnerabilities, and calculates cyclomatic complexity metrics for Python and other languages.",
+  "version": "1.0.0",
+  "url": "https://code-review-agent-PROJECT_NUMBER.us-west1.run.app/a2a/code_review_agent",
+  "defaultInputModes": ["text"],
+  "defaultOutputModes": ["text"],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "skills": [
+    {
+      "id": "code-smell-detection",
+      "name": "Code Smell Detection",
+      "description": "Identify structural code quality issues such as long functions, magic numbers, too many parameters, missing docstrings, and TODO markers.",
+      "tags": ["code-quality", "refactoring", "clean-code", "review"],
+      "examples": [
+        "Review this Python function for code smells",
+        "Does this code have any quality issues?",
+        "Check if my function is too long or complex"
+      ]
+    },
+    {
+      "id": "security-analysis",
+      "name": "Security Pattern Analysis",
+      "description": "Scan code for hardcoded credentials, SQL injection, shell injection, eval/exec usage, insecure deserialization, and SSL verification bypass.",
+      "tags": ["security", "owasp", "vulnerability", "review"],
+      "examples": [
+        "Is there a security vulnerability in this code?",
+        "Check this snippet for SQL injection risks",
+        "Does this code have any hardcoded secrets?",
+        "Review for OWASP top 10 vulnerabilities"
+      ]
+    },
+    {
+      "id": "complexity-metrics",
+      "name": "Complexity Metrics",
+      "description": "Compute cyclomatic complexity, function count, class count, and line count for Python code, with a maintainability rating.",
+      "tags": ["complexity", "metrics", "maintainability", "python"],
+      "examples": [
+        "What is the cyclomatic complexity of this function?",
+        "How complex is this Python module?",
+        "Calculate the maintainability metrics for my code"
+      ]
+    }
+  ]
+}

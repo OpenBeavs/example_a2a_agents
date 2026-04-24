@@ -1,0 +1,47 @@
+{
+  "name": "financial_auditor_agent",
+  "description": "A financial auditing agent that calculates key financial ratios, detects transaction anomalies using Z-score analysis, and generates structured audit reports with risk ratings.",
+  "version": "1.0.0",
+  "url": "https://financial-auditor-agent-PROJECT_NUMBER.us-west1.run.app/a2a/financial_auditor_agent",
+  "defaultInputModes": ["text"],
+  "defaultOutputModes": ["text"],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "skills": [
+    {
+      "id": "financial-ratio-analysis",
+      "name": "Financial Ratio Analysis",
+      "description": "Calculate gross margin, net margin, current ratio, debt-to-equity, ROA, ROE, and operating ratio from raw financial statement figures.",
+      "tags": ["finance", "ratios", "accounting", "analysis"],
+      "examples": [
+        "Calculate financial ratios: revenue $5M, COGS $2M, OpEx $1M, net income $800K, assets $4M, liabilities $1.5M, current assets $1.2M, current liabilities $600K, equity $2.5M",
+        "What is the current ratio if current assets are $300,000 and current liabilities are $150,000?",
+        "Analyze the debt-to-equity ratio for a company with $2M liabilities and $3M equity"
+      ]
+    },
+    {
+      "id": "anomaly-detection",
+      "name": "Transaction Anomaly Detection",
+      "description": "Detect statistically anomalous transactions in a dataset using Z-score analysis with configurable thresholds.",
+      "tags": ["fraud-detection", "anomaly", "statistics", "audit"],
+      "examples": [
+        "Check these transactions for anomalies: [1200, 1150, 1300, 1180, 45000, 1250, 1100]",
+        "Detect outliers in my expense data with a 3-sigma threshold",
+        "Which transactions look suspicious in this list: [500, 480, 510, 495, 12000, 505, 490]?"
+      ]
+    },
+    {
+      "id": "audit-report-generation",
+      "name": "Audit Report Generation",
+      "description": "Generate a structured audit summary report with a risk score and recommendation based on findings.",
+      "tags": ["audit", "report", "compliance", "risk"],
+      "examples": [
+        "Generate an audit report for Acme Corp Q3 2024: revenue $2M, net income $180K, 3 anomalies, high-risk ratios: current_ratio",
+        "Create a financial audit summary for FY 2023 with no anomalies found",
+        "Produce an audit report showing high risk for a company with 8 anomalies and poor ratios"
+      ]
+    }
+  ]
+}

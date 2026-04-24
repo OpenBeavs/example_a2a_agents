@@ -1,0 +1,38 @@
+{
+  "name": "weather_agent",
+  "description": "A weather agent that provides real-time current conditions and multi-day forecasts for any city worldwide using the Open-Meteo free API.",
+  "version": "1.0.0",
+  "url": "https://weather-agent-PROJECT_NUMBER.us-west1.run.app/a2a/weather_agent",
+  "defaultInputModes": ["text"],
+  "defaultOutputModes": ["text"],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "skills": [
+    {
+      "id": "current-weather",
+      "name": "Current Weather Lookup",
+      "description": "Get real-time temperature, humidity, wind speed, precipitation, and sky conditions for any city.",
+      "tags": ["weather", "current", "temperature", "forecast"],
+      "examples": [
+        "What is the weather in Portland, Oregon right now?",
+        "Current conditions in Tokyo",
+        "Is it raining in London?",
+        "How windy is it in Chicago today?"
+      ]
+    },
+    {
+      "id": "weather-forecast",
+      "name": "Multi-Day Weather Forecast",
+      "description": "Get a daily forecast (highs, lows, precipitation, conditions) for 1–16 days ahead.",
+      "tags": ["forecast", "weather", "daily", "planning"],
+      "examples": [
+        "What's the 5-day forecast for Seattle?",
+        "Will it snow in Denver this week?",
+        "Give me a 7-day forecast for Miami",
+        "What's the weather going to be like in Paris over the next 3 days?"
+      ]
+    }
+  ]
+}
