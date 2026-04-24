@@ -114,9 +114,16 @@ def hub_signin(hub_url, email, password):
         return None
 
 
+def _normalize_url(url: str) -> str:
+    """Prepend http:// if no scheme is present (handles 'localhost:8080' etc.)."""
+    if url and "://" not in url:
+        url = "http://" + url
+    return url.rstrip("/")
+
+
 def sync_with_hub(hub_url, email, password, agent_card_url, agent_name):
     """Sign in automatically, then update/create registry entry and install agent."""
-    hub_url = hub_url.rstrip("/")
+    hub_url = _normalize_url(hub_url)
 
     print(f"\n{'─'*70}")
     print("Syncing with GENESIS-AI-Hub...")
