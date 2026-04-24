@@ -2,7 +2,7 @@
   "name": "code_review_agent",
   "description": "A code review agent that detects code smells, identifies security vulnerabilities, and calculates cyclomatic complexity metrics for Python and other languages.",
   "version": "1.0.0",
-  "url": "https://code-review-agent-PROJECT_NUMBER.us-west1.run.app/a2a/code_review_agent",
+  "url": "",
   "defaultInputModes": ["text"],
   "defaultOutputModes": ["text"],
   "capabilities": {

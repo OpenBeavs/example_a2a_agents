@@ -2,7 +2,7 @@
   "name": "trivia_agent",
   "description": "A trivia host agent that fetches questions from Open Trivia DB across dozens of categories and difficulties, presents choices, and evaluates user answers.",
   "version": "1.0.0",
-  "url": "https://trivia-agent-PROJECT_NUMBER.us-west1.run.app/a2a/trivia_agent",
+  "url": "",
   "defaultInputModes": ["text"],
   "defaultOutputModes": ["text"],
   "capabilities": {

@@ -2,7 +2,7 @@
   "name": "unit_converter_agent",
   "description": "A unit conversion agent that accurately converts between dozens of units of length, temperature, weight, volume, speed, and data storage — all computed locally with no external APIs.",
   "version": "1.0.0",
-  "url": "https://unit-converter-agent-PROJECT_NUMBER.us-west1.run.app/a2a/unit_converter_agent",
+  "url": "",
   "defaultInputModes": ["text"],
   "defaultOutputModes": ["text"],
   "capabilities": {

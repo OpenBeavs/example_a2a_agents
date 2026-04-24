@@ -2,7 +2,7 @@
   "name": "financial_auditor_agent",
   "description": "A financial auditing agent that calculates key financial ratios, detects transaction anomalies using Z-score analysis, and generates structured audit reports with risk ratings.",
   "version": "1.0.0",
-  "url": "https://financial-auditor-agent-PROJECT_NUMBER.us-west1.run.app/a2a/financial_auditor_agent",
+  "url": "",
   "defaultInputModes": ["text"],
   "defaultOutputModes": ["text"],
   "capabilities": {
