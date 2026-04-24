@@ -2,22 +2,15 @@
 """
 Universal A2A Agent Deployment Script for Cloud Run
 
-Deploys ADK A2A agents to Google Cloud Run, then automatically signs into
-the GENESIS-AI-Hub and syncs the deployed URL to the registry + installs
-the agent. No manual token copying required.
-
-.env keys (all optional for hub sync):
-    HUB_URL      = https://your-hub.run.app
-    HUB_EMAIL    = your@email.com
-    HUB_PASSWORD = yourpassword
+Deploys ADK A2A agents to Google Cloud Run.
 
 Usage:
     python deploy_agent.py <agent-name> [options]
 
 Examples:
     python deploy_agent.py weather_agent
-    python deploy_agent.py financial_auditor_agent --project my-project
-    python deploy_agent.py trivia_agent --no-hub-sync
+    python deploy_agent.py trivia_agent --project my-project
+    python deploy_agent.py financial_auditor_agent --region us-central1
 """
 
 import subprocess
@@ -25,9 +18,6 @@ import sys
 import os
 import argparse
 import shutil
-import urllib.request
-import urllib.error
-import json
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -68,148 +58,24 @@ def get_project_number(project_id: str):
 
 
 # ─────────────────────────────────────────────────────────────
-# Hub helpers
-# ─────────────────────────────────────────────────────────────
-
-def _hub_request(method, url, token, body=None):
-    """Authenticated JSON request to the hub. Returns (status_code, dict)."""
-    data = json.dumps(body).encode() if body else None
-    req = urllib.request.Request(
-        url, data=data, method=method,
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return resp.status, json.loads(resp.read().decode())
-    except urllib.error.HTTPError as e:
-        try:
-            detail = json.loads(e.read().decode()).get("detail", str(e))
-        except Exception:
-            detail = str(e)
-        return e.code, {"detail": detail}
-    except Exception as e:
-        return 0, {"detail": str(e)}
-
-
-def hub_signin(hub_url, email, password):
-    """POST /api/auths/signin and return the bearer token, or None on failure."""
-    url = f"{hub_url}/api/auths/signin"
-    body = json.dumps({"email": email, "password": password}).encode()
-    req = urllib.request.Request(
-        url, data=body, method="POST",
-        headers={"Content-Type": "application/json"},
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read().decode()).get("token")
-    except urllib.error.HTTPError as e:
-        try:
-            detail = json.loads(e.read().decode()).get("detail", str(e))
-        except Exception:
-            detail = str(e)
-        print(f"  ✗ Hub signin failed ({e.code}): {detail}")
-        return None
-    except Exception as e:
-        print(f"  ✗ Hub signin error: {e}")
-        return None
-
-
-def _normalize_url(url: str) -> str:
-    """Prepend http:// if no scheme is present (handles 'localhost:8080' etc.)."""
-    if url and "://" not in url:
-        url = "http://" + url
-    return url.rstrip("/")
-
-
-def sync_with_hub(hub_url, email, password, agent_card_url, agent_name):
-    """Sign in automatically, then update/create registry entry and install agent."""
-    hub_url = _normalize_url(hub_url)
-
-    print(f"\n{'─'*70}")
-    print("Syncing with GENESIS-AI-Hub...")
-    print(f"  Hub:       {hub_url}")
-    print(f"  Card URL:  {agent_card_url}")
-    print(f"  Signing in as {email}...")
-
-    token = hub_signin(hub_url, email, password)
-    if not token:
-        print("  ⚠ Skipping hub sync — check HUB_EMAIL / HUB_PASSWORD in .env")
-        print(f"{'─'*70}\n")
-        return
-
-    registry_base = f"{hub_url}/api/registry"
-    agents_base   = f"{hub_url}/api/v1/agents"
-
-    # 1. Search registry for an existing entry matching this agent
-    status, entries = _hub_request("GET", f"{registry_base}/", token)
-    if status != 200:
-        print(f"  ⚠ Could not read registry ({status}): {entries.get('detail')}")
-        print(f"{'─'*70}\n")
-        return
-
-    existing = next(
-        (a for a in entries
-         if a.get("name", "").lower().replace(" ", "_") == agent_name.lower()),
-        None,
-    )
-
-    # 2a. Update existing entry
-    if existing:
-        status, result = _hub_request(
-            "PUT", f"{registry_base}/{existing['id']}", token, {"url": agent_card_url}
-        )
-        if status == 200:
-            print(f"  ✓ Registry entry updated  (id: {existing['id']})")
-        else:
-            print(f"  ⚠ Registry update failed ({status}): {result.get('detail')}")
-
-    # 2b. Create new entry — POST fetches the live agent card automatically
-    else:
-        status, result = _hub_request(
-            "POST", f"{registry_base}/", token, {"url": agent_card_url}
-        )
-        if status == 200:
-            print(f"  ✓ Registry entry created  (id: {result.get('id')})")
-        else:
-            print(f"  ⚠ Registry creation failed ({status}): {result.get('detail')}")
-
-    # 3. Install the agent
-    status, result = _hub_request(
-        "POST", f"{agents_base}/register-by-url", token, {"agent_url": agent_card_url}
-    )
-    if status == 200:
-        print(f"  ✓ Agent installed in hub  (id: {result.get('id')})")
-    else:
-        print(f"  ⚠ Agent install failed ({status}): {result.get('detail')}")
-
-    print(f"{'─'*70}\n")
-
-
-# ─────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Deploy an A2A agent to Cloud Run and auto-sync with the hub",
+        description="Deploy an A2A agent to Google Cloud Run",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Add to .env for fully automatic hub sync (no token needed):
-  HUB_URL      = https://your-hub.run.app
-  HUB_EMAIL    = your@email.com
-  HUB_PASSWORD = yourpassword
-
 Examples:
   %(prog)s weather_agent
-  %(prog)s financial_auditor_agent --project my-project
-  %(prog)s trivia_agent --no-hub-sync
+  %(prog)s trivia_agent --project my-project
+  %(prog)s financial_auditor_agent --region us-central1
         """
     )
     parser.add_argument("agent_name", help="Agent directory name to deploy")
-    parser.add_argument("--project",     help="GCP project ID (default: from gcloud config)")
-    parser.add_argument("--region",      help="GCP region (default: from gcloud config or us-west1)")
-    parser.add_argument("--memory",      default="1Gi", help="Cloud Run memory (default: 1Gi)")
-    parser.add_argument("--no-hub-sync", action="store_true", help="Skip hub registry sync")
+    parser.add_argument("--project", help="GCP project ID (default: from gcloud config)")
+    parser.add_argument("--region",  help="GCP region (default: from gcloud config or us-west1)")
+    parser.add_argument("--memory",  default="1Gi", help="Cloud Run memory (default: 1Gi)")
     args = parser.parse_args()
 
     load_dotenv(Path(__file__).parent / ".env")
@@ -237,25 +103,17 @@ Examples:
         print(f"  Available: {available}")
         sys.exit(1)
 
-    # Hub
-    hub_url      = os.environ.get("HUB_URL",      "").rstrip("/")
-    hub_email    = os.environ.get("HUB_EMAIL",    "")
-    hub_password = os.environ.get("HUB_PASSWORD", "")
-    hub_sync     = bool(hub_url and hub_email and hub_password) and not args.no_hub_sync
-
     print(f"\n{'='*70}")
     print("A2A Agent Cloud Run Deployment")
     print(f"{'='*70}")
-    print(f"  Agent:    {args.agent_name}")
-    print(f"  Service:  {service_name}")
-    print(f"  Project:  {project}")
-    print(f"  Region:   {region}")
-    print(f"  Memory:   {args.memory}")
-    print(f"  URL:      {app_url}")
-    print(f"  Hub sync: {'✓  ' + hub_url + '  (as ' + hub_email + ')' if hub_sync else '—  add HUB_URL + HUB_EMAIL + HUB_PASSWORD to .env to enable'}")
+    print(f"  Agent:   {args.agent_name}")
+    print(f"  Service: {service_name}")
+    print(f"  Project: {project}")
+    print(f"  Region:  {region}")
+    print(f"  Memory:  {args.memory}")
+    print(f"  URL:     {app_url}")
     print(f"{'='*70}\n")
 
-    # Env vars for Cloud Run
     env_vars = {
         "GOOGLE_CLOUD_PROJECT":  project,
         "GOOGLE_CLOUD_LOCATION": region,
@@ -303,16 +161,11 @@ Examples:
         print(f"\n{'='*70}")
         print("✓ Deployment successful!")
         print(f"{'='*70}")
-        print(f"  Service URL:  {app_url}")
-        print(f"  Agent card:   {agent_card_url}")
-        print(f"  A2A RPC:      {agent_rpc_url}")
-
-        if hub_sync:
-            sync_with_hub(hub_url, hub_email, hub_password, agent_card_url, raw_name)
-        else:
-            print(f"\n  Tip: add HUB_URL + HUB_EMAIL + HUB_PASSWORD to .env for automatic hub sync.\n")
-
-        print(f"Logs: gcloud run services logs read {service_name} --project={project} --region={region}\n")
+        print(f"  Service URL: {app_url}")
+        print(f"  Agent card:  {agent_card_url}")
+        print(f"  A2A RPC:     {agent_rpc_url}")
+        print(f"\n  To register in the hub, paste the agent card URL into Workspace → Agents.")
+        print(f"\nLogs: gcloud run services logs read {service_name} --project={project} --region={region}\n")
 
     except FileNotFoundError:
         print("\n✗ gcloud not found. Install: https://cloud.google.com/sdk/docs/install")
