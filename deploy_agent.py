@@ -13,6 +13,7 @@ Examples:
     python deploy_agent.py financial_auditor_agent --region us-central1
 """
 
+import json
 import subprocess
 import sys
 import os
@@ -55,6 +56,52 @@ def get_project_number(project_id: str):
         return result.stdout.strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
         return None
+
+
+def get_cloud_run_url(service_name: str, project: str, region: str):
+    """Return the real HTTPS URL assigned to a Cloud Run service."""
+    try:
+        result = subprocess.run(
+            [
+                _gcloud_exe(), "run", "services", "describe", service_name,
+                f"--project={project}", f"--region={region}",
+                "--format=value(status.url)",
+            ],
+            check=True, capture_output=True, text=True, encoding="utf-8",
+        )
+        value = result.stdout.strip()
+        return value if value else None
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
+# ─────────────────────────────────────────────────────────────
+# agent.json helpers
+# ─────────────────────────────────────────────────────────────
+
+def update_agent_json_url(agent_dir: Path, agent_name: str, base_url: str) -> bool:
+    """Write the agent's Cloud Run URL into agent.json before the image is built.
+
+    The ``url`` field in the A2A agent card must point to the sub-path where
+    ADK mounts the agent: ``{base_url}/a2a/{agent_name}/``.
+
+    Returns True if the file was updated, False if it was not found.
+    """
+    agent_json_path = agent_dir / "agent.json"
+    if not agent_json_path.exists():
+        return False
+
+    with agent_json_path.open(encoding="utf-8") as f:
+        data = json.load(f)
+
+    agent_url = f"{base_url.rstrip('/')}/a2a/{agent_name}/"
+    data["url"] = agent_url
+
+    with agent_json_path.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+        f.write("\n")
+
+    return True
 
 
 # ─────────────────────────────────────────────────────────────
@@ -111,8 +158,13 @@ Examples:
     print(f"  Project: {project}")
     print(f"  Region:  {region}")
     print(f"  Memory:  {args.memory}")
-    print(f"  URL:     {app_url}")
+    print(f"  URL:     {app_url}  (predicted)")
     print(f"{'='*70}\n")
+
+    # Update agent.json with the predicted URL before the image is built so
+    # the agent card served by the deployed container is never blank.
+    if update_agent_json_url(agent_dir, raw_name, app_url):
+        print(f"✓ agent.json url set to {app_url}/a2a/{raw_name}/\n")
 
     env_vars = {
         "GOOGLE_CLOUD_PROJECT":  project,
@@ -136,6 +188,7 @@ Examples:
         f"--memory={args.memory}",
         f"--set-env-vars={env_vars_str}",
         "--allow-unauthenticated",
+        "--clear-base-image",
     ]
 
     print("Running:", " ".join(deploy_cmd))
@@ -155,13 +208,21 @@ Examples:
             "--member=allUsers", "--role=roles/run.invoker",
         ], text=True, encoding="utf-8")
 
-        agent_card_url = f"{app_url}/a2a/{raw_name}/.well-known/agent-card.json"
-        agent_rpc_url  = f"{app_url}/a2a/{raw_name}/"
+        # Get the real URL from GCP now that the service is live.
+        # gcloud run deploy is synchronous so the service is ready at this point.
+        real_url = get_cloud_run_url(service_name, project, region) or app_url
+        if real_url != app_url:
+            # Predicted URL was wrong — update agent.json with the correct one.
+            update_agent_json_url(agent_dir, raw_name, real_url)
+            print(f"\n⚠ Real URL differs from prediction — agent.json corrected to {real_url}/a2a/{raw_name}/")
+
+        agent_card_url = f"{real_url}/a2a/{raw_name}/.well-known/agent-card.json"
+        agent_rpc_url  = f"{real_url}/a2a/{raw_name}/"
 
         print(f"\n{'='*70}")
         print("✓ Deployment successful!")
         print(f"{'='*70}")
-        print(f"  Service URL: {app_url}")
+        print(f"  Service URL: {real_url}")
         print(f"  Agent card:  {agent_card_url}")
         print(f"  A2A RPC:     {agent_rpc_url}")
         print(f"\n  To register in the hub, paste the agent card URL into Workspace → Agents.")

@@ -1,10 +1,14 @@
 {
   "name": "unit_converter_agent",
-  "description": "A unit conversion agent that accurately converts between dozens of units of length, temperature, weight, volume, speed, and data storage — all computed locally with no external APIs.",
+  "description": "A unit conversion agent that accurately converts between dozens of units of length, temperature, weight, volume, speed, and data storage \u2014 all computed locally with no external APIs.",
   "version": "1.0.0",
-  "url": "",
-  "defaultInputModes": ["text"],
-  "defaultOutputModes": ["text"],
+  "url": "https://unit-converter-agent-ahkgdqjvhq-uw.a.run.app/a2a/unit_converter_agent/",
+  "defaultInputModes": [
+    "text"
+  ],
+  "defaultOutputModes": [
+    "text"
+  ],
   "capabilities": {
     "streaming": false,
     "pushNotifications": false
@@ -14,7 +18,12 @@
       "id": "length-conversion",
       "name": "Length Conversion",
       "description": "Convert between mm, cm, m, km, inches, feet, yards, miles, and nautical miles.",
-      "tags": ["conversion", "length", "distance", "measurement"],
+      "tags": [
+        "conversion",
+        "length",
+        "distance",
+        "measurement"
+      ],
       "examples": [
         "Convert 5 miles to kilometers",
         "How many meters is 100 feet?",
@@ -25,10 +34,15 @@
       "id": "temperature-conversion",
       "name": "Temperature Conversion",
       "description": "Convert between Celsius, Fahrenheit, and Kelvin.",
-      "tags": ["temperature", "celsius", "fahrenheit", "kelvin"],
+      "tags": [
+        "temperature",
+        "celsius",
+        "fahrenheit",
+        "kelvin"
+      ],
       "examples": [
-        "Convert 100°C to Fahrenheit",
-        "What is 72°F in Celsius?",
+        "Convert 100\u00b0C to Fahrenheit",
+        "What is 72\u00b0F in Celsius?",
         "Convert 300 Kelvin to Celsius"
       ]
     },
@@ -36,7 +50,12 @@
       "id": "weight-conversion",
       "name": "Weight Conversion",
       "description": "Convert between mg, g, kg, tonnes, ounces, pounds, stones, and short tons.",
-      "tags": ["weight", "mass", "conversion", "measurement"],
+      "tags": [
+        "weight",
+        "mass",
+        "conversion",
+        "measurement"
+      ],
       "examples": [
         "Convert 150 pounds to kilograms",
         "How many ounces in 2 kg?",
@@ -47,7 +66,12 @@
       "id": "volume-conversion",
       "name": "Volume Conversion",
       "description": "Convert between ml, liters, gallons, cups, pints, quarts, tablespoons, and more.",
-      "tags": ["volume", "liquid", "cooking", "conversion"],
+      "tags": [
+        "volume",
+        "liquid",
+        "cooking",
+        "conversion"
+      ],
       "examples": [
         "Convert 2 gallons to liters",
         "How many cups in a quart?",
@@ -58,7 +82,12 @@
       "id": "speed-conversion",
       "name": "Speed Conversion",
       "description": "Convert between m/s, km/h, mph, knots, and ft/s.",
-      "tags": ["speed", "velocity", "conversion", "physics"],
+      "tags": [
+        "speed",
+        "velocity",
+        "conversion",
+        "physics"
+      ],
       "examples": [
         "Convert 60 mph to km/h",
         "What is 100 km/h in knots?",
@@ -69,7 +98,12 @@
       "id": "data-storage-conversion",
       "name": "Data Storage Conversion",
       "description": "Convert between bytes, KB, MB, GB, TB, and PB.",
-      "tags": ["data", "storage", "bytes", "computing"],
+      "tags": [
+        "data",
+        "storage",
+        "bytes",
+        "computing"
+      ],
       "examples": [
         "Convert 2.5 GB to MB",
         "How many bytes in 1 TB?",
