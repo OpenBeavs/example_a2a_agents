@@ -22,6 +22,12 @@ import shutil
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Windows cp1252 consoles can't print Unicode checkmarks — force UTF-8.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 
 # ─────────────────────────────────────────────────────────────
 # GCloud helpers

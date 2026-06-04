@@ -2,9 +2,13 @@
   "name": "code_review_agent",
   "description": "A code review agent that detects code smells, identifies security vulnerabilities, and calculates cyclomatic complexity metrics for Python and other languages.",
   "version": "1.0.0",
-  "url": "",
-  "defaultInputModes": ["text"],
-  "defaultOutputModes": ["text"],
+  "url": "https://code-review-agent-ahkgdqjvhq-uw.a.run.app/a2a/code_review_agent/",
+  "defaultInputModes": [
+    "text"
+  ],
+  "defaultOutputModes": [
+    "text"
+  ],
   "capabilities": {
     "streaming": false,
     "pushNotifications": false
@@ -14,7 +18,12 @@
       "id": "code-smell-detection",
       "name": "Code Smell Detection",
       "description": "Identify structural code quality issues such as long functions, magic numbers, too many parameters, missing docstrings, and TODO markers.",
-      "tags": ["code-quality", "refactoring", "clean-code", "review"],
+      "tags": [
+        "code-quality",
+        "refactoring",
+        "clean-code",
+        "review"
+      ],
       "examples": [
         "Review this Python function for code smells",
         "Does this code have any quality issues?",
@@ -25,7 +34,12 @@
       "id": "security-analysis",
       "name": "Security Pattern Analysis",
       "description": "Scan code for hardcoded credentials, SQL injection, shell injection, eval/exec usage, insecure deserialization, and SSL verification bypass.",
-      "tags": ["security", "owasp", "vulnerability", "review"],
+      "tags": [
+        "security",
+        "owasp",
+        "vulnerability",
+        "review"
+      ],
       "examples": [
         "Is there a security vulnerability in this code?",
         "Check this snippet for SQL injection risks",
@@ -37,7 +51,12 @@
       "id": "complexity-metrics",
       "name": "Complexity Metrics",
       "description": "Compute cyclomatic complexity, function count, class count, and line count for Python code, with a maintainability rating.",
-      "tags": ["complexity", "metrics", "maintainability", "python"],
+      "tags": [
+        "complexity",
+        "metrics",
+        "maintainability",
+        "python"
+      ],
       "examples": [
         "What is the cyclomatic complexity of this function?",
         "How complex is this Python module?",

@@ -2,9 +2,13 @@
   "name": "trivia_agent",
   "description": "A trivia host agent that fetches questions from Open Trivia DB across dozens of categories and difficulties, presents choices, and evaluates user answers.",
   "version": "1.0.0",
-  "url": "",
-  "defaultInputModes": ["text"],
-  "defaultOutputModes": ["text"],
+  "url": "https://trivia-agent-ahkgdqjvhq-uw.a.run.app/a2a/trivia_agent/",
+  "defaultInputModes": [
+    "text"
+  ],
+  "defaultOutputModes": [
+    "text"
+  ],
   "capabilities": {
     "streaming": false,
     "pushNotifications": false
@@ -14,7 +18,12 @@
       "id": "trivia-quiz",
       "name": "Trivia Quiz",
       "description": "Ask trivia questions from 24 categories including science, history, sports, movies, music, and more at easy, medium, or hard difficulty.",
-      "tags": ["trivia", "quiz", "games", "education"],
+      "tags": [
+        "trivia",
+        "quiz",
+        "games",
+        "education"
+      ],
       "examples": [
         "Ask me a trivia question",
         "Give me a hard science trivia question",
@@ -27,7 +36,12 @@
       "id": "answer-evaluation",
       "name": "Answer Evaluation",
       "description": "Evaluate whether a user's answer to a trivia question is correct and provide feedback.",
-      "tags": ["trivia", "quiz", "evaluation", "feedback"],
+      "tags": [
+        "trivia",
+        "quiz",
+        "evaluation",
+        "feedback"
+      ],
       "examples": [
         "My answer is Paris",
         "I think the answer is True",
